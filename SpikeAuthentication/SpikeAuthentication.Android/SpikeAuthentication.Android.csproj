@@ -16,7 +16,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
@@ -95,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SpikeAuthentication\SpikeAuthentication.csproj">
-      <Project>{8DB6C32A-4D45-4A4A-9C02-114B97659872}</Project>
+      <Project>{AF65BFB6-14FA-459D-ACA7-A3BDAD4BEB14}</Project>
       <Name>SpikeAuthentication</Name>
     </ProjectReference>
   </ItemGroup>

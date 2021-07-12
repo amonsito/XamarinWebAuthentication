@@ -36,7 +36,7 @@ namespace SpikeAuthentication
             if (!isFingerprintAvailable)
             {
                 await DisplayAlert("Error",
-                    "Biometric authentication is not available or is not configured.", "OK");
+                    "El biometrico no esta configurado.", "OK");
                 return;
             }
 
