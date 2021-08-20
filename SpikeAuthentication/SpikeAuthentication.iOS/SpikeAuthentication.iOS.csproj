@@ -124,6 +124,9 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MonkeyCache.FileStore">
+      <Version>1.5.2</Version>
+    </PackageReference>
     <PackageReference Include="Plugin.Fingerprint">
       <Version>2.1.4</Version>
     </PackageReference>

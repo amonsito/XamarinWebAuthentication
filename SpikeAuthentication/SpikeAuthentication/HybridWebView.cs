@@ -1,4 +1,6 @@
-﻿using SpikeAuthentication.Dto;
+﻿using MonkeyCache.FileStore;
+using Newtonsoft.Json;
+using SpikeAuthentication.Dto;
 using System;
 using Xamarin.Forms;
 
@@ -6,6 +8,7 @@ namespace SpikeAuthentication
 {
     public class HybridWebView : WebView
     {
+        const string UserBiometric = "UserBiometric";
         public static readonly BindableProperty userLoginProperty = BindableProperty.Create(propertyName: "UserLogin",
               returnType: typeof(UserLogin),
               declaringType: typeof(HybridWebView),
@@ -41,13 +44,11 @@ namespace SpikeAuthentication
         Action<string> loginConfirmedAction;
         public void RegisterLoginConfirmedAction(Action<string> callback) => loginConfirmedAction = callback;
 
-
         public static readonly BindableProperty UriProperty = BindableProperty.Create(
             propertyName: "Uri",
             returnType: typeof(string),
             declaringType: typeof(HybridWebView),
             defaultValue: default(string));
-
 
         public string Uri
         {
@@ -63,31 +64,34 @@ namespace SpikeAuthentication
             loginConfirmedAction = null;
         }
 
-        public void BiometricAuthAvailable(string data)
+        public bool BiometricAuthAvailable()
         {
-            if (biometricAuthAvailableAction == null || data == null)
-            {
-                return;
-            }
-            biometricAuthAvailableAction.Invoke(data);
+            var hasBiometric = Barrel.Current.Exists(UserBiometric);
+            return hasBiometric;
         }
 
-        public void BiometricAuth(string data)
+        public void BiometricAuth()
         {
-            if (biometricAuthAction == null || data == null)
+            if (biometricAuthAction == null)
             {
                 return;
             }
-            biometricAuthAction.Invoke(data);
+            biometricAuthAction.Invoke(null);
         }
 
-        public void RememberUser(string data)
+        public void RememberUser(string idNumber, string idType, string password)
         {
-            if (rememberUserAction == null || data == null)
+            if (!Barrel.Current.Exists(UserBiometric))
             {
-                return;
+                var user = new UserLogin
+                {
+                    idNumber = idNumber,
+                    idType = idType,
+                    password = password
+                };
+                var userJson = JsonConvert.SerializeObject(user);
+                this.rememberUserAction.Invoke(userJson);
             }
-            rememberUserAction.Invoke(data);
         }
 
         public void LoginConfirmed(string data)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MonkeyCache.FileStore;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,7 +10,7 @@ namespace SpikeAuthentication
         public App()
         {
             InitializeComponent();
-
+            Barrel.ApplicationId = "com.Spike.Authentication";
             MainPage = new NavigationPage(new LoginPageTest());
         }
 
