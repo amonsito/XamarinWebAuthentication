@@ -9,9 +9,13 @@
             <Label Text="Beatiful App" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
         </Frame>
         
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
+        <Label x:Name="NumberUser" Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
         
         <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
+
+        <Button x:Name="botonOlvidarUsuario" Text="Borrar usuario" Clicked="Button_Clicked"></Button>
+
+        <Button Text="Cerrar" Clicked="Button_Clicked2"></Button>
         
     </StackLayout>
 

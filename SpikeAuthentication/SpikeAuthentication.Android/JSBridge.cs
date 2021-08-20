@@ -14,43 +14,44 @@ namespace SpikeAuthentication.Droid
         }
 
         [JavascriptInterface]
-        [Export("BiometricAuthAvailable")]
-        public void BiometricAuthAvailable(string data)
+        [Export("biometricAuthAvailable")]
+        public bool BiometricAuthAvailable()
         {
             HybridWebViewRenderer hybridRenderer;
 
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
-                ((HybridWebView)hybridRenderer.Element).BiometricAuthAvailable(data);
+                return ((HybridWebView)hybridRenderer.Element).BiometricAuthAvailable();
             }
+            return false;
         }
 
         [JavascriptInterface]
-        [Export("BiometricAuth")]
-        public void BiometricAuth(string data)
+        [Export("biometricAuth")]
+        public void biometricAuth()
         {
             HybridWebViewRenderer hybridRenderer;
 
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
-                ((HybridWebView)hybridRenderer.Element).BiometricAuth(data);
+                ((HybridWebView)hybridRenderer.Element).BiometricAuth();
             }
         }
 
         [JavascriptInterface]
-        [Export("RememberUser")]
-        public void RegisterRememberUser(string data)
+        [Export("rememberUser")]
+        public void RegisterRememberUser(string idNumber,string idType, string password)
         {
             HybridWebViewRenderer hybridRenderer;
 
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
-                ((HybridWebView)hybridRenderer.Element).RememberUser(data);
+                ((HybridWebView)hybridRenderer.Element).RememberUser(idNumber, idType, password);
             }
         }
 
         [JavascriptInterface]
-        [Export("LoginConfirmed")]
+        [Export("loginConfirmed")]
         public void LoginConfirmed(string data)
         {
             HybridWebViewRenderer hybridRenderer;

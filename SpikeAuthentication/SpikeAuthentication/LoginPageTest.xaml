@@ -2,23 +2,17 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:SpikeAuthentication"
+             NavigationPage.HasNavigationBar="False"
              x:Class="SpikeAuthentication.LoginPageTest">
     
     <StackLayout>
 
-        <Button 
-            Text="Login"
-            VerticalOptions="StartAndExpand"
-            BackgroundColor="Silver"
-            TextColor="Black"
-            Clicked="Button_Clicked"
-            HeightRequest="50"/>
-
         <local:HybridWebView 
-            HeightRequest="500"
-            BackgroundColor="Blue"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"
             x:Name="hybridWebView"
             Uri="https://compensar.sop.dev.infomediaservice.online/webview/views/index.html" />
+       
 
     </StackLayout>
     

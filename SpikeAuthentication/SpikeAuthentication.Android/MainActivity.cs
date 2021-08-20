@@ -5,12 +5,16 @@ using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
 using Plugin.Fingerprint;
+using Android.Webkit;
+using Android.Net.Http;
 
 namespace SpikeAuthentication.Droid
 {
     [Activity(Label = "SpikeAuthentication", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+
+        public static Activity Instance;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             CrossFingerprint.SetCurrentActivityResolver(() => this);
@@ -25,6 +29,11 @@ namespace SpikeAuthentication.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        protected override void OnResume()
+        {
+            Instance = this;
+            base.OnResume();
         }
     }
 }
