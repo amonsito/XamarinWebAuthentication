@@ -1,5 +1,6 @@
 ﻿using MonkeyCache.FileStore;
 using Newtonsoft.Json;
+using Plugin.Fingerprint;
 using SpikeAuthentication.Dto;
 using System;
 using Xamarin.Forms;
@@ -66,7 +67,7 @@ namespace SpikeAuthentication
 
         public bool BiometricAuthAvailable()
         {
-            var hasBiometric = Barrel.Current.Exists(UserBiometric);
+            var hasBiometric = Barrel.Current.Exists(UserBiometric) && CrossFingerprint.Current.IsAvailableAsync(false).GetAwaiter().GetResult();
             return hasBiometric;
         }
 

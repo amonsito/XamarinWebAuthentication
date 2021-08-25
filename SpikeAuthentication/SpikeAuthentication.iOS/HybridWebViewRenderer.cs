@@ -2,6 +2,7 @@
 using SpikeAuthentication;
 using SpikeAuthentication.Dto;
 using SpikeAuthentication.iOS;
+using System;
 using System.ComponentModel;
 using WebKit;
 using Xamarin.Forms;
@@ -12,18 +13,26 @@ namespace SpikeAuthentication.iOS
 {
     public class HybridWebViewRenderer : WkWebViewRenderer, IWKScriptMessageHandler
     {
-        const string JavaScriptFunction = "var HostApp = { loginConfirmed: function (data) { window.webkit.messageHandlers.LoginConfirmed.postMessage(data); }, RememberUser: function (data) { window.webkit.messageHandlers.RememberUser.postMessage(data); }, BiometricAuth: function (data) { window.webkit.messageHandlers.BiometricAuth.postMessage(data); }, BiometricAuthAvailable: function (data) { window.webkit.messageHandlers.BiometricAuthAvailable.postMessage(data); } }";
+        const string JavaScriptFunction = "var HostApp = { loginConfirmed: function (data) { window.webkit.messageHandlers.LoginConfirmed.postMessage(data); }, rememberUser: function (idNumber,idType,password) { window.webkit.messageHandlers.RememberUser.postMessage({IdNumber:idNumber,IdType:idType,Password:password}); }, biometricAuth: function (data) { window.webkit.messageHandlers.BiometricAuth.postMessage(data); }, biometricAuthAvailable: function (data) { return window.webkit.messageHandlers.BiometricAuthAvailable.postMessage(data);} };";
         WKUserContentController userController;
 
         public HybridWebViewRenderer() : this(new WKWebViewConfiguration())
         {
+#if DEBUG
+            //only for ssl-fail
+            NavigationDelegate = new CWKNavigationDelegate();
+#endif
+
         }
 
         public HybridWebViewRenderer(WKWebViewConfiguration config) : base(config)
         {
+            config.Preferences.JavaScriptEnabled = true;
             userController = config.UserContentController;
             var script = new WKUserScript(new NSString(JavaScriptFunction), WKUserScriptInjectionTime.AtDocumentEnd, false);
+
             userController.AddUserScript(script);
+
             userController.AddScriptMessageHandler(this, "LoginConfirmed");
 
             userController.AddScriptMessageHandler(this, "RememberUser");
@@ -31,6 +40,7 @@ namespace SpikeAuthentication.iOS
             userController.AddScriptMessageHandler(this, "BiometricAuth");
 
             userController.AddScriptMessageHandler(this, "BiometricAuthAvailable");
+
         }
 
         protected override void OnElementChanged(VisualElementChangedEventArgs e)
@@ -50,10 +60,10 @@ namespace SpikeAuthentication.iOS
 
             if (e.NewElement != null)
             {
-                string filename = $"{((HybridWebView)Element).Uri}";
-                LoadRequest(new NSUrlRequest(new NSUrl(filename)));
+                LoadRequest(new NSUrlRequest(new NSUrl((Element as HybridWebView).Uri)));
                 Element.PropertyChanged += OnElementPropertyChanged;
             }
+
         }
 
         private void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -64,6 +74,7 @@ namespace SpikeAuthentication.iOS
                 var customWebView = Element as HybridWebView;
                 LoginUser(customWebView.UserLogin);
             }
+
         }
 
         public void LoginUser(UserLogin user)
@@ -81,15 +92,21 @@ namespace SpikeAuthentication.iOS
             }
             else if (message.Name == "RememberUser")
             {
-                ((HybridWebView)Element).RememberUser(message.Body.ToString());
+                var values = message.Body;
+                var idNumber = values.ValueForKey(new NSString("IdNumber")).ToString();
+                var idType = values.ValueForKey(new NSString("IdType")).ToString();
+                var password = values.ValueForKey(new NSString("Password")).ToString();
+
+                ((HybridWebView)Element).RememberUser(idNumber, idType, password);
             }
             else if (message.Name == "BiometricAuth")
             {
-                ((HybridWebView)Element).BiometricAuth(message.Body.ToString());
+                ((HybridWebView)Element).BiometricAuth();
             }
             else if (message.Name == "BiometricAuthAvailable")
             {
-                ((HybridWebView)Element).BiometricAuthAvailable(message.Body.ToString());
+                string scriptAvaliableBiometric = ((HybridWebView)Element).BiometricAuthAvailable() ? "$(\"#btnBiometric\").show();" : "$(\"#btnBiometric\").hide();";
+                message.WebView.EvaluateJavaScript(scriptAvaliableBiometric, null);
             }
 
         }
@@ -104,4 +121,22 @@ namespace SpikeAuthentication.iOS
         }
 
     }
+
+    /// <summary>
+    /// Only for ssl-fail
+    /// </summary>
+    public class CWKNavigationDelegate : WKUserContentController, IWKNavigationDelegate, INSUrlConnectionDataDelegate
+    {
+        [Export("webView:didReceiveAuthenticationChallenge:completionHandler:")]
+        public virtual void DidReceiveAuthenticationChallenge(WKWebView webView, NSUrlAuthenticationChallenge nac, Action<NSUrlSessionAuthChallengeDisposition, NSUrlCredential> NC)
+        {
+            if (nac.ProtectionSpace.AuthenticationMethod.Equals("NSURLAuthenticationMethodServerTrust"))
+            {
+                nac.Sender.UseCredential(new NSUrlCredential(nac.ProtectionSpace.ServerSecTrust), nac);
+                nac.Sender.ContinueWithoutCredential(nac);
+            }
+
+        }
+    }
+
 }

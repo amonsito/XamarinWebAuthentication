@@ -25,7 +25,7 @@ namespace SpikeAuthentication
             if (Barrel.Current.Exists(UserBiometric))
             {
                 var userRemember = Barrel.Current.Get<UserLogin>(UserBiometric);
-                NumberUser.Text = userRemember.idNumber;
+                NumberUser.Text = $"Guardado: {userRemember.idNumber}";
                 this.botonOlvidarUsuario.IsVisible = true;
                 NumberUser.IsVisible = true;
             }
